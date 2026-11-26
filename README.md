@@ -51,7 +51,7 @@ Otros comandos: `pnpm build`, `pnpm lint`, `pnpm typecheck`.
 | Variable | Para qué | Ejemplo |
 |---|---|---|
 | `NEXT_PUBLIC_WHATSAPP` | Número del negocio, con indicativo y sin `+` | `573043139986` |
-| `NEXT_PUBLIC_SITE_URL` | URL pública, para los enlaces y la vista previa al compartir | `https://auralight.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | Opcional. URL pública para los enlaces y la vista previa al compartir. En Vercel se detecta sola; úsala solo con un dominio propio | `https://auralightt.vercel.app` |
 
 ## Publicar en Vercel
 
