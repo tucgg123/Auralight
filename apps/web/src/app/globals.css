@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --color-noche: #08080a;
+  --color-carbon: #121216;
+  --color-grafito: #1c1c22;
+  --color-borde: #2a2a32;
+  --color-oro: #d4af6a;
+  --color-oro-claro: #ecd29a;
+  --color-oro-oscuro: #9c7a3c;
+  --color-pavo: #1fa39a;
+  --color-pavo-claro: #5fd3c6;
+  --color-zafiro: #3d63d8;
+  --color-marfil: #f3ede1;
+  --color-humo: #a7a3a0;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cinzel), Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-noche);
+  color: var(--color-marfil);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.texto-oro {
+  background: linear-gradient(180deg, var(--color-oro-claro) 0%, var(--color-oro) 55%, var(--color-oro-oscuro) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.fondo-pavo {
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgba(31, 163, 154, 0.18), transparent 70%),
+    radial-gradient(40% 40% at 85% 30%, rgba(61, 99, 216, 0.14), transparent 70%),
+    var(--color-noche);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-oro);
+  outline-offset: 2px;
+}
