@@ -36,7 +36,7 @@ packages/              # (próximamente) tipos y esquemas compartidos
 
 ## Correr en local
 
-Requisitos: Node 20+ y pnpm.
+Requisitos: Node 22 y pnpm.
 
 ```bash
 pnpm install
