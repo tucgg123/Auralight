@@ -4,7 +4,7 @@
   "description": "Tienda web de piezas únicas de Auralight",
   "packageManager": "pnpm@10.28.0",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "pnpm --filter web dev",
