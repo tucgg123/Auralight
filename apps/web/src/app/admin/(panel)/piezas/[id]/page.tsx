@@ -6,9 +6,12 @@ import { AccionesPieza } from "@/components/admin/AccionesPieza";
 import { FormularioPieza } from "@/components/admin/FormularioPieza";
 import { GestorFotos } from "@/components/admin/GestorFotos";
 import { PanelVenta } from "@/components/admin/PanelVenta";
+import { PublicacionInstagram } from "@/components/admin/PublicacionInstagram";
 import { Aviso } from "@/components/admin/ui";
 import { InsigniaEstado } from "@/components/InsigniaEstado";
 import { apiAdmin, ErrorApi, type FeriaAdmin, type PiezaAdmin } from "@/lib/admin/api";
+import { textoPublicacion } from "@/lib/admin/instagram";
+import { sitio } from "@/lib/config";
 import { categorias } from "@/lib/datos";
 
 export const metadata: Metadata = { title: "Editar pieza" };
@@ -63,6 +66,15 @@ export default async function EditarPieza({ params, searchParams }: Props) {
 
       <Seccion titulo="Fotos">
         <GestorFotos productoId={pieza.id} imagenes={pieza.imagenes} />
+      </Seccion>
+
+      <Seccion titulo="Publicación para Instagram">
+        <PublicacionInstagram
+          productoId={pieza.id}
+          codigo={pieza.codigo}
+          fotos={pieza.imagenes.length}
+          texto={textoPublicacion(pieza, sitio.url)}
+        />
       </Seccion>
 
       <Seccion titulo={pieza.venta ? "Venta" : "Registrar venta"}>
