@@ -114,9 +114,10 @@ pnpm lint && pnpm typecheck
 
 1. **Neon:** crea un proyecto y copia la cadena de conexión (`DATABASE_URL`).
 2. **Cloudinary:** copia *Cloud name*, *API key* y *API secret* del panel.
-3. **Render:** *New → Blueprint* con este repositorio (usa `render.yaml`). Llena `DATABASE_URL` y las de Cloudinary.
-   Las migraciones se aplican solas al arrancar. Crea el administrador una vez desde la *Shell* de Render:
-   `ADMIN_EMAIL=… ADMIN_PASSWORD=… pnpm --filter api db:seed`
+3. **Render:** *New → Blueprint* con este repositorio (usa `render.yaml`). Llena `DATABASE_URL`, las de Cloudinary,
+   `ADMIN_EMAIL` y `ADMIN_PASSWORD`. Al arrancar, la API aplica las migraciones y crea las categorías y el
+   administrador si no existen (no cambia la contraseña de un administrador que ya existe).
+   Con Neon, usa la conexión directa (sin `-pooler` en el host) para que las migraciones funcionen.
 4. **Vercel:** en el proyecto web agrega `API_URL` con la dirección de Render y vuelve a desplegar.
 
 ## Próximos pasos (Fase 2)

@@ -5,9 +5,10 @@ services:
     name: auralight-api
     runtime: node
     plan: free
-    region: virginia
+    region: ohio # misma zona que la base de datos de Neon (us-east-2)
     buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build
-    startCommand: pnpm --filter api db:deploy && pnpm --filter api start
+    # Al arrancar: aplica migraciones, crea categorías y el administrador si no existen (idempotente), e inicia.
+    startCommand: pnpm --filter api db:deploy && pnpm --filter api db:seed && pnpm --filter api start
     healthCheckPath: /salud
     envVars:
       - key: NODE_VERSION
@@ -18,6 +19,12 @@ services:
         generateValue: true
       - key: JWT_REFRESH_SECRET
         generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NOMBRE
+        value: Santiago
       - key: WEB_ORIGIN
         value: https://auralightt.vercel.app
       - key: CLOUDINARY_CLOUD_NAME
