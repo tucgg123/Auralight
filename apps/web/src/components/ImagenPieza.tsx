@@ -1,4 +1,4 @@
-import type { Acento, Categoria } from "@/lib/tipos";
+import type { Acento, Forma } from "@/lib/tipos";
 
 /**
  * Ilustración provisional para la demo, mientras se cargan las fotos reales.
@@ -19,7 +19,7 @@ export function ImagenPieza({
   className,
   etiqueta,
 }: {
-  forma: Categoria["forma"];
+  forma: Forma;
   acento: Acento;
   className?: string;
   etiqueta: string;

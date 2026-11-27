@@ -1,13 +1,11 @@
 import Link from "next/link";
 import clsx from "clsx";
-import { categoriaPorSlug } from "@/data/catalogo";
 import { formatearPrecio } from "@/lib/formato";
 import type { Pieza } from "@/lib/tipos";
-import { ImagenPieza } from "./ImagenPieza";
+import { FotoPieza } from "./FotoPieza";
 import { InsigniaEstado } from "./InsigniaEstado";
 
 export function TarjetaPieza({ pieza }: { pieza: Pieza }) {
-  const cat = categoriaPorSlug(pieza.categoria);
   const vendida = pieza.estado === "VENDIDA";
 
   return (
@@ -16,10 +14,9 @@ export function TarjetaPieza({ pieza }: { pieza: Pieza }) {
       className="group block overflow-hidden rounded-2xl border border-borde bg-carbon transition hover:-translate-y-0.5 hover:border-oro/50"
     >
       <div className="relative aspect-square overflow-hidden">
-        <ImagenPieza
-          forma={cat?.forma ?? "collar"}
-          acento={pieza.acento}
-          etiqueta={pieza.nombre}
+        <FotoPieza
+          pieza={pieza}
+          ancho={400}
           className={clsx(
             "h-full w-full transition duration-500 group-hover:scale-105",
             vendida && "opacity-50 grayscale",
@@ -31,7 +28,7 @@ export function TarjetaPieza({ pieza }: { pieza: Pieza }) {
         </span>
       </div>
       <div className="p-4">
-        <p className="text-xs uppercase tracking-wider text-humo">{cat?.nombre}</p>
+        <p className="text-xs uppercase tracking-wider text-humo">{pieza.categoria.nombre}</p>
         <h3 className="mt-1 line-clamp-1 font-medium text-marfil group-hover:text-oro-claro">{pieza.nombre}</h3>
         <p className={clsx("mt-1 font-display text-lg", vendida ? "text-humo line-through" : "text-oro")}>
           {formatearPrecio(pieza.precio)}

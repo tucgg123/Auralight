@@ -5,10 +5,19 @@ const estilos: Record<EstadoPieza, { texto: string; clase: string }> = {
   DISPONIBLE: { texto: "Pieza única", clase: "bg-noche/80 text-oro border-oro/50" },
   RESERVADA: { texto: "Reservada", clase: "bg-zafiro/85 text-white border-zafiro" },
   VENDIDA: { texto: "Vendida", clase: "bg-marfil text-noche border-marfil" },
-  OCULTA: { texto: "Oculta", clase: "bg-grafito text-humo border-borde" },
+  OCULTA: { texto: "Oculta", clase: "bg-grafito text-marfil/80 border-borde" },
 };
 
-export function InsigniaEstado({ estado, className }: { estado: EstadoPieza; className?: string }) {
+export function InsigniaEstado({
+  estado,
+  className,
+  admin,
+}: {
+  estado: EstadoPieza;
+  className?: string;
+  /** En el panel, "Disponible" en vez de "Pieza única" */
+  admin?: boolean;
+}) {
   const e = estilos[estado];
   return (
     <span
@@ -18,7 +27,7 @@ export function InsigniaEstado({ estado, className }: { estado: EstadoPieza; cla
         className,
       )}
     >
-      {e.texto}
+      {admin && estado === "DISPONIBLE" ? "Disponible" : e.texto}
     </span>
   );
 }

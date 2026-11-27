@@ -16,6 +16,38 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm build
+      - run: pnpm --filter web lint
+      - run: pnpm --filter web typecheck
+      # Sin API_URL: compila con los datos de ejemplo.
+      - run: pnpm --filter web build
+
+  api:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: auralight
+          POSTGRES_PASSWORD: auralight
+          POSTGRES_DB: auralight_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U auralight"
+          --health-interval 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://auralight:auralight@localhost:5432/auralight_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter api exec prisma generate
+      - run: pnpm --filter api lint
+      - run: pnpm --filter api typecheck
+      - run: pnpm --filter api test
+      - run: pnpm --filter api test:e2e
+      - run: pnpm --filter api build
