@@ -1,0 +1,30 @@
+# Blueprint de Render para la API: en Render, New → Blueprint y elige este repositorio.
+# Las variables marcadas con sync: false se llenan en el panel de Render.
+services:
+  - type: web
+    name: auralight-api
+    runtime: node
+    plan: free
+    region: virginia
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build
+    startCommand: pnpm --filter api db:deploy && pnpm --filter api start
+    healthCheckPath: /salud
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: WEB_ORIGIN
+        value: https://auralightt.vercel.app
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: auralight

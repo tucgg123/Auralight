@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Inter } from "next/font/google";
-import { AvisoDemo } from "@/components/AvisoDemo";
-import { Encabezado } from "@/components/Encabezado";
-import { Pie } from "@/components/Pie";
 import { sitio } from "@/lib/config";
 import "./globals.css";
 
@@ -30,12 +27,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es-CO" className={`${inter.variable} ${cinzel.variable}`}>
-      <body className="min-h-dvh">
-        <AvisoDemo />
-        <Encabezado />
-        <main>{children}</main>
-        <Pie />
-      </body>
+      <body className="min-h-dvh">{children}</body>
     </html>
   );
 }

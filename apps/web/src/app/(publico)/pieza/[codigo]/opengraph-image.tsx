@@ -1,0 +1,60 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { ImageResponse } from "next/og";
+import { piezaPorCodigo } from "@/lib/datos";
+import { fotoCloudinary } from "@/lib/formas";
+import { formatearPrecio } from "@/lib/formato";
+
+export const alt = "Pieza única de Auralight";
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
+
+export const revalidate = 300;
+
+export default async function Imagen({ params }: { params: Promise<{ codigo: string }> }) {
+  const { codigo } = await params;
+  const pieza = await piezaPorCodigo(codigo);
+  const logo = await readFile(join(process.cwd(), "public/logo-pavo.png"));
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
+  const cat = pieza?.categoria;
+  const foto = pieza?.imagenes[0] ? fotoCloudinary(pieza.imagenes[0], 460).replace("f_auto", "f_png") : null;
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          background: "radial-gradient(circle at 20% 30%, #0f3a37 0%, #08080a 60%)",
+          color: "#f3ede1",
+          padding: 70,
+          gap: 60,
+        }}
+      >
+        {foto ? (
+          <img src={foto} width={420} height={420} alt="" style={{ borderRadius: 32, objectFit: "cover" }} />
+        ) : (
+          <img src={logoSrc} width={300} height={385} alt="" />
+        )}
+        <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+          <div style={{ fontSize: 28, letterSpacing: 8, color: "#d4af6a" }}>AURALIGHT</div>
+          <div style={{ fontSize: 26, color: "#5fd3c6", marginTop: 30 }}>
+            {`${cat ? `${cat.nombre} · ` : ""}#${pieza?.codigo ?? codigo}`}
+          </div>
+          <div style={{ fontSize: 64, fontWeight: 700, marginTop: 10, lineHeight: 1.1 }}>
+            {pieza?.nombre ?? "Pieza única"}
+          </div>
+          {pieza && (
+            <div style={{ fontSize: 54, color: "#ecd29a", marginTop: 24 }}>{formatearPrecio(pieza.precio)}</div>
+          )}
+          <div style={{ fontSize: 26, color: "#a7a3a0", marginTop: 30 }}>
+            {pieza?.estado === "VENDIDA" ? "Vendida" : "Pieza única · cuando se vende, no vuelve"}
+          </div>
+        </div>
+      </div>
+    ),
+    size,
+  );
+}

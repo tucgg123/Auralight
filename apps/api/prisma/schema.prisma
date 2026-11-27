@@ -1,0 +1,142 @@
+// Modelo de datos de Auralight (ver sección 6 del plan del proyecto).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  ADMIN
+}
+
+enum EstadoProducto {
+  DISPONIBLE
+  RESERVADA
+  VENDIDA
+  OCULTA
+}
+
+enum EstadoReserva {
+  ACTIVA
+  CONFIRMADA
+  VENCIDA
+  CANCELADA
+  CONVERTIDA
+}
+
+enum CanalVenta {
+  WEB
+  FERIA
+  WHATSAPP
+  INSTAGRAM
+  OTRO
+}
+
+model Admin {
+  id             String   @id @default(uuid()) @db.Uuid
+  nombre         String
+  email          String   @unique
+  hashContrasena String   @map("hash_contrasena")
+  rol            Rol      @default(ADMIN)
+  /// Se incrementa al cerrar sesión para invalidar todos los refresh tokens.
+  versionToken   Int      @default(0) @map("version_token")
+  creadoEn       DateTime @default(now()) @map("creado_en")
+  ventas         Venta[]
+
+  @@map("admin")
+}
+
+model Categoria {
+  id            Int        @id @default(autoincrement())
+  nombre        String     @unique
+  slug          String     @unique
+  /// Nombre en singular para el mensaje de WhatsApp ("quiero el anillo…").
+  singular      String
+  articulo      String     @default("el")
+  prefijoCodigo String     @unique @map("prefijo_codigo")
+  /// Último consecutivo usado para generar códigos como A-042.
+  consecutivo   Int        @default(0)
+  orden         Int        @default(0)
+  productos     Producto[]
+
+  @@map("categoria")
+}
+
+model Producto {
+  id             String         @id @default(uuid()) @db.Uuid
+  codigo         String         @unique
+  nombre         String
+  descripcion    String         @default("")
+  material       String
+  /// Pesos colombianos, entero sin decimales.
+  precio         Int
+  estado         EstadoProducto @default(DISPONIBLE)
+  reservadoHasta DateTime?      @map("reservado_hasta")
+  categoriaId    Int            @map("categoria_id")
+  categoria      Categoria      @relation(fields: [categoriaId], references: [id])
+  creadoEn       DateTime       @default(now()) @map("creado_en")
+  actualizadoEn  DateTime       @updatedAt @map("actualizado_en")
+  imagenes       Imagen[]
+  reservas       Reserva[]
+  venta          Venta?
+
+  @@index([estado, creadoEn])
+  @@map("producto")
+}
+
+model Imagen {
+  id         String   @id @default(uuid()) @db.Uuid
+  productoId String   @map("producto_id") @db.Uuid
+  producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  publicId   String   @map("public_id")
+  orden      Int      @default(0)
+
+  @@index([productoId, orden])
+  @@map("imagen")
+}
+
+model Reserva {
+  id         String        @id @default(uuid()) @db.Uuid
+  productoId String        @map("producto_id") @db.Uuid
+  producto   Producto      @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  estado     EstadoReserva @default(ACTIVA)
+  expiraEn   DateTime      @map("expira_en")
+  ipHash     String?       @map("ip_hash")
+  creadaEn   DateTime      @default(now()) @map("creada_en")
+
+  @@index([productoId, estado])
+  @@map("reserva")
+}
+
+model Feria {
+  id      String   @id @default(uuid()) @db.Uuid
+  nombre  String
+  lugar   String
+  fecha   DateTime @db.Date
+  horario String?
+  ventas  Venta[]
+
+  @@index([fecha])
+  @@map("feria")
+}
+
+model Venta {
+  id            String     @id @default(uuid()) @db.Uuid
+  /// Único: la base de datos impide vender dos veces la misma pieza.
+  productoId    String     @unique @map("producto_id") @db.Uuid
+  producto      Producto   @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  precioFinal   Int        @map("precio_final")
+  canal         CanalVenta
+  feriaId       String?    @map("feria_id") @db.Uuid
+  feria         Feria?     @relation(fields: [feriaId], references: [id], onDelete: SetNull)
+  registradaPor String?    @map("registrada_por") @db.Uuid
+  admin         Admin?     @relation(fields: [registradaPor], references: [id], onDelete: SetNull)
+  fecha         DateTime   @default(now())
+
+  @@index([fecha])
+  @@map("venta")
+}

@@ -1,0 +1,20 @@
+# Base de datos local para desarrollo: docker compose up -d
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: auralight
+      POSTGRES_PASSWORD: auralight
+      POSTGRES_DB: auralight
+    ports:
+      - "5432:5432"
+    volumes:
+      - datos:/var/lib/postgresql/data
+      - ./apps/api/prisma/crear-bd-pruebas.sql:/docker-entrypoint-initdb.d/crear-bd-pruebas.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auralight"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  datos:
