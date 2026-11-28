@@ -21,19 +21,44 @@ export function BotonEnviar({
   children,
   textoCargando = "Guardando…",
   variante = "principal",
+  cargando,
   className,
   ...props
-}: ComponentProps<"button"> & { textoCargando?: string; variante?: "principal" | "secundario" | "peligro" }) {
-  const { pending } = useFormStatus();
+}: ComponentProps<"button"> & {
+  textoCargando?: string;
+  variante?: "principal" | "secundario" | "peligro";
+  /** El `isPending` de useActionState. useFormStatus no siempre se entera del envío, así que se pasa explícito. */
+  cargando?: boolean;
+}) {
+  const { pending: enviando } = useFormStatus();
+  const pending = cargando || enviando;
   return (
     <button
       type="submit"
-      disabled={pending || props.disabled}
-      className={clsx(claseBoton(variante), className)}
       {...props}
+      disabled={pending || props.disabled}
+      aria-busy={pending}
+      className={clsx(claseBoton(variante), className)}
     >
-      {pending ? textoCargando : children}
+      {pending ? (
+        <>
+          <Girando />
+          {textoCargando}
+        </>
+      ) : (
+        children
+      )}
     </button>
+  );
+}
+
+/** Círculo que gira, para mostrar que algo está pasando. */
+export function Girando({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={clsx("size-4 animate-spin", className)}>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
   );
 }
 

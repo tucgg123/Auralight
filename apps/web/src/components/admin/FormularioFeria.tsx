@@ -14,7 +14,7 @@ interface Feria {
 }
 
 export function FormularioFeria({ feria = {}, alGuardar }: { feria?: Feria; alGuardar?: () => void }) {
-  const [estado, accion] = useActionState(async (prev: EstadoFormulario, f: FormData) => {
+  const [estado, accion, cargando] = useActionState(async (prev: EstadoFormulario, f: FormData) => {
     const r = await guardarFeria(prev, f);
     if (r.ok) alGuardar?.();
     return r;
@@ -43,7 +43,7 @@ export function FormularioFeria({ feria = {}, alGuardar }: { feria?: Feria; alGu
       <Aviso estado={estado} />
       <Aviso estado={borrado} />
       <div className="flex flex-wrap gap-2">
-        <BotonEnviar>{feria.id ? "Guardar" : "Crear feria"}</BotonEnviar>
+        <BotonEnviar cargando={cargando}>{feria.id ? "Guardar" : "Crear feria"}</BotonEnviar>
         {feria.id && !feria.ventas && (
           <button
             type="button"
