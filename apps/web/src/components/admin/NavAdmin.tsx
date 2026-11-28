@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { CalendarDays, Gem, Plus, Receipt } from "lucide-react";
+import { CalendarDays, Gem, Plus, Receipt, Tags } from "lucide-react";
 
 const enlaces = [
   { href: "/admin/piezas", texto: "Piezas", icono: Gem, exacto: true },
   { href: "/admin/piezas/nueva", texto: "Nueva", icono: Plus, exacto: true },
   { href: "/admin/ventas", texto: "Ventas", icono: Receipt },
+  { href: "/admin/categorias", texto: "Categorías", icono: Tags },
   { href: "/admin/ferias", texto: "Ferias", icono: CalendarDays },
 ];
 
@@ -47,7 +48,7 @@ export function NavAdminMovil() {
   return (
     <>
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-borde bg-noche/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-borde bg-noche/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
         aria-label="Panel móvil"
       >
         {enlaces.map((e) => (

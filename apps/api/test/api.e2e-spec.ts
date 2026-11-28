@@ -179,4 +179,63 @@ describe("API de Auralight (integración)", () => {
     await http().post("/auth/logout").set(auth()).expect(204);
     await http().post("/auth/refresh").send({ refreshToken: refresh }).expect(401);
   });
+
+  describe("categorías", () => {
+    beforeAll(async () => {
+      token = (await http().post("/auth/login").send(ADMIN).expect(200)).body.accessToken;
+    });
+
+    it("crea una categoría con slug y orden automáticos", async () => {
+      const r = await http()
+        .post("/admin/categorias")
+        .set(auth())
+        .send({ nombre: "Tobilleras Únicas", singular: "tobillera", articulo: "la", prefijoCodigo: "t" })
+        .expect(201);
+      expect(r.body).toMatchObject({ slug: "tobilleras-unicas", prefijoCodigo: "T" });
+      const lista = await http().get("/categorias").expect(200);
+      expect(lista.body.at(-1).slug).toBe("tobilleras-unicas");
+    });
+
+    it("no repite prefijos ni nombres", async () => {
+      const r = await http()
+        .post("/admin/categorias")
+        .set(auth())
+        .send({ nombre: "Argollas", singular: "argolla", articulo: "la", prefijoCodigo: "A" })
+        .expect(409);
+      expect(r.body.mensaje).toMatch(/prefijo A/);
+      await http()
+        .post("/admin/categorias")
+        .set(auth())
+        .send({ nombre: "anillos", singular: "anillo", articulo: "el", prefijoCodigo: "N" })
+        .expect(409);
+    });
+
+    it("las piezas nuevas usan el prefijo de la categoría", async () => {
+      const r = await http()
+        .post("/admin/productos")
+        .set(auth())
+        .send({ nombre: "Tobillera Sol", categoria: "tobilleras-unicas", material: "Acero", precio: 15000 })
+        .expect(201);
+      expect(r.body.codigo).toBe("T-001");
+    });
+
+    it("no deja cambiar el prefijo ni borrar una categoría con piezas", async () => {
+      const cats = await http().get("/admin/categorias").set(auth()).expect(200);
+      const tob = cats.body.find((c: { slug: string }) => c.slug === "tobilleras-unicas");
+      expect(tob._count.productos).toBe(1);
+      await http().patch(`/admin/categorias/${tob.id}`).set(auth()).send({ prefijoCodigo: "B" }).expect(409);
+      await http().delete(`/admin/categorias/${tob.id}`).set(auth()).expect(409);
+      await http().patch(`/admin/categorias/${tob.id}`).set(auth()).send({ nombre: "Tobilleras" }).expect(200);
+    });
+
+    it("borra una categoría vacía", async () => {
+      const r = await http()
+        .post("/admin/categorias")
+        .set(auth())
+        .send({ nombre: "Broches", singular: "broche", articulo: "el", prefijoCodigo: "B" })
+        .expect(201);
+      await http().delete(`/admin/categorias/${r.body.id}`).set(auth()).expect(204);
+      await http().get("/admin/categorias").expect(401);
+    });
+  });
 });

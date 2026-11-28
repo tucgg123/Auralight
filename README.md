@@ -4,7 +4,7 @@ Tienda web de **piezas únicas** (anillos, manillas, collares, cadenas y aretes)
 Cada pieza existe una sola vez: cuando se vende, no vuelve. La compra se cierra por WhatsApp.
 
 - **Sitio público:** https://auralightt.vercel.app
-- **Panel de administración:** `/admin` (subir piezas con fotos desde el celular, registrar ventas y ferias)
+- **Panel de administración:** `/admin` (subir piezas con fotos desde el celular, registrar ventas, ferias y categorías)
 - **API:** NestJS con documentación Swagger en `/docs`
 
 ## Arquitectura
@@ -52,7 +52,7 @@ Cliente ──► Next.js (Vercel) ──REST──► NestJS (Render) ──Pri
 apps/
   web/                         # Next.js
     src/app/(publico)/         # Inicio, catálogo, pieza/[codigo], vendidas, ferias
-    src/app/admin/             # Login y panel (piezas, ventas, ferias) + Server Actions
+    src/app/admin/             # Login y panel (piezas, ventas, ferias, categorías) + Server Actions
     src/lib/datos.ts           # Capa de datos: API o datos de ejemplo
     src/middleware.ts          # Protege /admin y renueva la sesión
   api/                         # NestJS
