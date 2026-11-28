@@ -206,6 +206,62 @@ export async function eliminarPieza(id: string): Promise<EstadoFormulario> {
   redirect("/admin/piezas");
 }
 
+// ---- Categorías ----
+
+function refrescarCategorias() {
+  refrescarCatalogo();
+  revalidatePath("/admin/categorias");
+}
+
+export async function guardarCategoria(_: EstadoFormulario, f: FormData): Promise<EstadoFormulario> {
+  const id = texto(f, "id");
+  const prefijo = texto(f, "prefijoCodigo");
+  const datos = {
+    nombre: texto(f, "nombre"),
+    singular: texto(f, "singular"),
+    articulo: texto(f, "articulo"),
+    // Si la categoría ya tiene piezas el campo va deshabilitado y no llega: no se envía.
+    prefijoCodigo: prefijo || undefined,
+  };
+  try {
+    await apiAdmin(id ? `/admin/categorias/${id}` : "/admin/categorias", {
+      method: id ? "PATCH" : "POST",
+      body: JSON.stringify(datos),
+    });
+  } catch (e) {
+    relanzarRedireccion(e);
+    return conValores(f, { error: mensaje(e) });
+  }
+  refrescarCategorias();
+  return id ? conValores(f, { ok: "Categoría actualizada." }) : { ok: "Categoría creada. Ya puedes usarla al subir piezas." };
+}
+
+export async function eliminarCategoria(id: number): Promise<EstadoFormulario> {
+  try {
+    await apiAdmin(`/admin/categorias/${id}`, { method: "DELETE" });
+  } catch (e) {
+    relanzarRedireccion(e);
+    return { error: mensaje(e) };
+  }
+  refrescarCategorias();
+  return { ok: "Categoría eliminada." };
+}
+
+/** Intercambia el orden de dos categorías vecinas (flechas ↑ ↓ del panel). */
+export async function intercambiarOrden(a: { id: number; orden: number }, b: { id: number; orden: number }) {
+  // Si tenían el mismo orden, las separamos para que el cambio se note.
+  const ordenB = a.orden === b.orden ? a.orden + 1 : b.orden;
+  try {
+    await apiAdmin(`/admin/categorias/${a.id}`, { method: "PATCH", body: JSON.stringify({ orden: ordenB }) });
+    await apiAdmin(`/admin/categorias/${b.id}`, { method: "PATCH", body: JSON.stringify({ orden: a.orden }) });
+  } catch (e) {
+    relanzarRedireccion(e);
+    return { error: mensaje(e) };
+  }
+  refrescarCategorias();
+  return {};
+}
+
 // ---- Ferias ----
 
 function refrescarFerias() {

@@ -63,6 +63,18 @@ export interface PiezaAdmin {
   };
 }
 
+export interface CategoriaAdmin {
+  id: number;
+  nombre: string;
+  slug: string;
+  singular: string;
+  articulo: string;
+  prefijoCodigo: string;
+  consecutivo: number;
+  orden: number;
+  _count: { productos: number };
+}
+
 export interface FeriaAdmin {
   id: string;
   nombre: string;
