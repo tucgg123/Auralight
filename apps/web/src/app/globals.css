@@ -48,3 +48,12 @@ body {
   outline: 2px solid var(--color-oro);
   outline-offset: 2px;
 }
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

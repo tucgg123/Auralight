@@ -34,7 +34,7 @@ export function FormularioPieza({
   categorias: { slug: string; nombre: string }[];
   valores?: Valores;
 }) {
-  const [estado, accion] = useActionState(guardarPieza, {});
+  const [estado, accion, cargando] = useActionState(guardarPieza, {});
   const [fotos, setFotos] = useState<{ publicId: string; url: string }[]>([]);
   const nueva = !valores.id;
   // Si hubo un error, se vuelve a llenar con lo que se envió.
@@ -142,7 +142,7 @@ export function FormularioPieza({
       </Campo>
 
       <Aviso estado={estado} />
-      <BotonEnviar className="w-full sm:w-auto sm:px-10">{nueva ? "Publicar pieza" : "Guardar cambios"}</BotonEnviar>
+      <BotonEnviar cargando={cargando} className="w-full sm:w-auto sm:px-10">{nueva ? "Publicar pieza" : "Guardar cambios"}</BotonEnviar>
     </form>
   );
 }

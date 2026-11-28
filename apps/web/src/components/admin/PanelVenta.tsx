@@ -16,7 +16,7 @@ export function PanelVenta({
   pieza: PiezaAdmin;
   ferias: { id: string; nombre: string; fecha: string }[];
 }) {
-  const [estado, accion] = useActionState(registrarVenta, {});
+  const [estado, accion, cargando] = useActionState(registrarVenta, {});
   const [canal, setCanal] = useState<Canal>("WHATSAPP");
   const [deshecho, setDeshecho] = useState<EstadoFormulario>();
   const [deshaciendo, iniciar] = useTransition();
@@ -113,7 +113,7 @@ export function PanelVenta({
       </Campo>
 
       <Aviso estado={estado} />
-      <BotonEnviar textoCargando="Registrando…" className="w-full sm:w-auto">
+      <BotonEnviar cargando={cargando} textoCargando="Registrando…" className="w-full sm:w-auto">
         Marcar como vendida
       </BotonEnviar>
     </form>
